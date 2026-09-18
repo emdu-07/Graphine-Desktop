@@ -141,9 +141,11 @@ export function MotionWorkspace() {
             <div className="stage-stats-wrap">
               <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
               <div className="stage-grid-controls stage-grid-controls-inline">
-                <button type="button" className="grid-toggle-button" onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
-                  <span>Grid</span>
-                  <span className={`grid-status ${gridEnabled ? 'on' : 'off'}`}>{gridEnabled ? 'On' : 'Off'}</span>
+                <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`} onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
+                  <span className="grid-toggle-label">Grid</span>
+                  <span className="grid-toggle-track" aria-hidden="true">
+                    <span className="grid-toggle-thumb" />
+                  </span>
                 </button>
                 {gridOpen && (
                   <div className="grid-panel" role="group" aria-label="Grid settings">
