@@ -25,7 +25,7 @@ export function MotionWorkspace() {
   const [showShapes, setShowShapes] = useState(false)
   const [gridOpen, setGridOpen] = useState(false)
   const [gridEnabled, setGridEnabled] = useState(true)
-  const [gridColor, setGridColor] = useState('#dfe7e4')
+  const [gridColor, setGridColor] = useState('#aab8b4')
   const [gridOpacity, setGridOpacity] = useState(100)
   const fileInput = useRef<HTMLInputElement>(null)
   const objectRef = useRef(object)
@@ -139,7 +139,6 @@ export function MotionWorkspace() {
           <div className="canvas-bar">
             <div className="object-identity"><Box size={15} /><span>{object.name}</span>{object.kind !== 'image' && <ShapeColorPicker value={object.fill} onChange={fill => updateObject({ ...objectRef.current, fill })} disabled={phase === 'recording' || phase === 'countdown'} />}</div>
             <div className="stage-stats-wrap">
-              <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
               <div className="stage-grid-controls stage-grid-controls-inline">
                 <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`} onClick={() => setGridEnabled(!gridEnabled)} aria-pressed={gridEnabled} aria-label={gridEnabled ? 'Disable grid' : 'Enable grid'}>
                   <span className="grid-toggle-label">Grid</span>
@@ -149,12 +148,6 @@ export function MotionWorkspace() {
                 </button>
                 {gridOpen && (
                   <div className="grid-panel" role="group" aria-label="Grid settings">
-                    <label className="grid-color-row">
-                      <span>Colour</span>
-                      <div className="grid-color-control">
-                        <ShapeColorPicker value={gridColor} onChange={setGridColor} />
-                      </div>
-                    </label>
                     <label className="grid-slider-row">
                       <span>Opacity</span>
                       <div className="grid-opacity-control">
@@ -164,6 +157,7 @@ export function MotionWorkspace() {
                   </div>
                 )}
               </div>
+              <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
             </div>
           </div>
           <MotionStage object={object} onChange={updateObject} countdown={countdown} recording={phase === 'recording'} motionPath={trailSamples} gridEnabled={gridEnabled} gridColor={gridColor} gridOpacity={gridOpacity} />
