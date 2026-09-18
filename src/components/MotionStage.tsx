@@ -13,6 +13,9 @@ interface MotionStageProps {
   countdown?: number | null
   recording?: boolean
   motionPath?: MotionSample[]
+  gridEnabled?: boolean
+  gridColor?: string
+  gridOpacity?: number
 }
 
 const WORLD_WIDTH = 1024
@@ -56,7 +59,7 @@ function LoadedImage({ src }: { src?: string }) {
   return image
 }
 
-export function MotionStage({ object, onChange, previewPosition, countdown, recording, motionPath = [] }: MotionStageProps) {
+export function MotionStage({ object, onChange, previewPosition, countdown, recording, motionPath = [], gridEnabled = true, gridColor, gridOpacity = 100 }: MotionStageProps) {
   const theme = useContext(ThemeContext)
   const positionKeys = useMemo(() => buildMotionResult(motionPath).keyframes.position, [motionPath])
   const canvasColors = theme === 'light'
@@ -71,10 +74,6 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
   const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 })
   const [activeSnap, setActiveSnap] = useState<'horizontal' | 'vertical' | null>(null)
   const [snapGuidePosition, setSnapGuidePosition] = useState(0)
-  const [gridOpen, setGridOpen] = useState(false)
-  const [gridEnabled, setGridEnabled] = useState(true)
-  const [gridColor, setGridColor] = useState(theme === 'light' ? '#dfe7e4' : '#223039')
-  const [gridOpacity, setGridOpacity] = useState(100)
   const hasCentered = useRef(false)
   const dragMotion = useRef<{
     originX: number
@@ -305,7 +304,8 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
     return <Rect {...appearance} width={object.width} height={object.height} cornerRadius={24} />
   }
 
-  const gridStroke = gridEnabled ? hexToRgba(gridColor, gridOpacity / 100) : 'transparent'
+  const resolvedGridColor = gridColor ?? (theme === 'light' ? '#dfe7e4' : '#223039')
+  const gridStroke = gridEnabled ? hexToRgba(resolvedGridColor, gridOpacity / 100) : 'transparent'
 
   const endX = object.x
   const endY = object.y
@@ -427,28 +427,6 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
         <div className="countdown-overlay"><span>GET READY</span><strong key={countdown}>{countdown}</strong><small>Grab the object when recording starts</small></div>
       )}
       {recording && <div className="recording-indicator"><i /> RECORDING MOVEMENT</div>}
-      <div className="stage-grid-controls">
-        <button type="button" className="grid-toggle-button" onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
-          <span>Grid</span>
-          <span className={`grid-status ${gridEnabled ? 'on' : 'off'}`}>{gridEnabled ? 'On' : 'Off'}</span>
-        </button>
-        {gridOpen && (
-          <div className="grid-panel" role="group" aria-label="Grid settings">
-            <label className="grid-panel-row">
-              <span>Visible</span>
-              <input type="checkbox" checked={gridEnabled} onChange={event => setGridEnabled(event.target.checked)} />
-            </label>
-            <label className="grid-color-row">
-              <span>Colour</span>
-              <input type="color" value={gridColor} onChange={event => setGridColor(event.target.value)} />
-            </label>
-            <label className="grid-slider-row">
-              <span>Opacity</span>
-              <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
-            </label>
-          </div>
-        )}
-      </div>
       <div className="viewport-controls" aria-label="Canvas zoom controls">
         <button onClick={() => zoomFromCenter(.8)} title="Zoom out"><Minus size={13} /></button>
         <span>{Math.round(viewport.scale * 100)}%</span>

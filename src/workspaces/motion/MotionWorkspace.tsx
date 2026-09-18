@@ -23,6 +23,10 @@ export function MotionWorkspace() {
   const [samples, setSamples] = useState<MotionSample[]>([])
   const [trailSamples, setTrailSamples] = useState<MotionSample[]>([])
   const [showShapes, setShowShapes] = useState(false)
+  const [gridOpen, setGridOpen] = useState(false)
+  const [gridEnabled, setGridEnabled] = useState(true)
+  const [gridColor, setGridColor] = useState('#dfe7e4')
+  const [gridOpacity, setGridOpacity] = useState(100)
   const fileInput = useRef<HTMLInputElement>(null)
   const objectRef = useRef(object)
   const sampleBuffer = useRef<MotionSample[]>([])
@@ -134,9 +138,33 @@ export function MotionWorkspace() {
         <div className={`canvas-card ${phase === 'recording' ? 'is-recording' : ''}`}>
           <div className="canvas-bar">
             <div className="object-identity"><Box size={15} /><span>{object.name}</span>{object.kind !== 'image' && <ShapeColorPicker value={object.fill} onChange={fill => updateObject({ ...objectRef.current, fill })} disabled={phase === 'recording' || phase === 'countdown'} />}</div>
-            <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
+            <div className="stage-stats-wrap">
+              <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
+              <div className="stage-grid-controls stage-grid-controls-inline">
+                <button type="button" className="grid-toggle-button" onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
+                  <span>Grid</span>
+                  <span className={`grid-status ${gridEnabled ? 'on' : 'off'}`}>{gridEnabled ? 'On' : 'Off'}</span>
+                </button>
+                {gridOpen && (
+                  <div className="grid-panel" role="group" aria-label="Grid settings">
+                    <label className="grid-panel-row">
+                      <span>Visible</span>
+                      <input type="checkbox" checked={gridEnabled} onChange={event => setGridEnabled(event.target.checked)} />
+                    </label>
+                    <label className="grid-color-row">
+                      <span>Colour</span>
+                      <input type="color" value={gridColor} onChange={event => setGridColor(event.target.value)} />
+                    </label>
+                    <label className="grid-slider-row">
+                      <span>Opacity</span>
+                      <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
+                    </label>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          <MotionStage object={object} onChange={updateObject} countdown={countdown} recording={phase === 'recording'} motionPath={trailSamples} />
+          <MotionStage object={object} onChange={updateObject} countdown={countdown} recording={phase === 'recording'} motionPath={trailSamples} gridEnabled={gridEnabled} gridColor={gridColor} gridOpacity={gridOpacity} />
           <div className="playback-bar capture-bar">
             <button className={`play-button ${phase === 'recording' ? 'stop' : ''}`} onClick={phase === 'recording' ? stopCapture : startCapture} disabled={phase === 'countdown'}>{phase === 'recording' ? <StopCircle size={17} /> : <Play size={17} fill="currentColor" />}</button>
             <span className="timecode">{elapsed.toFixed(1)}s</span>
