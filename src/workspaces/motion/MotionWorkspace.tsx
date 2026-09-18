@@ -149,17 +149,21 @@ export function MotionWorkspace() {
                 </button>
                 {gridOpen && (
                   <div className="grid-panel" role="group" aria-label="Grid settings">
-                    <label className="grid-panel-row">
+                    <div className="grid-panel-row grid-panel-row-button" onClick={() => setGridEnabled(!gridEnabled)}>
                       <span>Visible</span>
-                      <input type="checkbox" checked={gridEnabled} onChange={event => setGridEnabled(event.target.checked)} />
-                    </label>
+                      <span className={`grid-toggle-list-item ${gridEnabled ? 'on' : 'off'}`} aria-hidden="true" />
+                    </div>
                     <label className="grid-color-row">
                       <span>Colour</span>
-                      <input type="color" value={gridColor} onChange={event => setGridColor(event.target.value)} />
+                      <div className="grid-color-control">
+                        <ShapeColorPicker value={gridColor} onChange={setGridColor} />
+                      </div>
                     </label>
                     <label className="grid-slider-row">
                       <span>Opacity</span>
-                      <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
+                      <div className="grid-opacity-control">
+                        <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
+                      </div>
                     </label>
                   </div>
                 )}
