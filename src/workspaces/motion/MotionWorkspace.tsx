@@ -141,7 +141,7 @@ export function MotionWorkspace() {
             <div className="stage-stats-wrap">
               <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
               <div className="stage-grid-controls stage-grid-controls-inline">
-                <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`} onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
+                <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`} onClick={() => setGridEnabled(!gridEnabled)} aria-pressed={gridEnabled} aria-label={gridEnabled ? 'Disable grid' : 'Enable grid'}>
                   <span className="grid-toggle-label">Grid</span>
                   <span className="grid-toggle-track" aria-hidden="true">
                     <span className="grid-toggle-thumb" />
@@ -149,10 +149,6 @@ export function MotionWorkspace() {
                 </button>
                 {gridOpen && (
                   <div className="grid-panel" role="group" aria-label="Grid settings">
-                    <div className="grid-panel-row grid-panel-row-button" onClick={() => setGridEnabled(!gridEnabled)}>
-                      <span>Visible</span>
-                      <span className={`grid-toggle-list-item ${gridEnabled ? 'on' : 'off'}`} aria-hidden="true" />
-                    </div>
                     <label className="grid-color-row">
                       <span>Colour</span>
                       <div className="grid-color-control">
