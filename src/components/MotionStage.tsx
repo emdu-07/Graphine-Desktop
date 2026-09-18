@@ -20,6 +20,16 @@ const WORLD_HEIGHT = 1024
 const MIN_ZOOM = .35
 const MAX_ZOOM = 3
 
+function hexToRgba(hex: string, alpha: number) {
+  const numeric = /^#?([0-9a-fA-F]{6})$/.exec(hex)
+  if (!numeric) return hex
+  const value = numeric[1]
+  const red = Number.parseInt(value.slice(0, 2), 16)
+  const green = Number.parseInt(value.slice(2, 4), 16)
+  const blue = Number.parseInt(value.slice(4, 6), 16)
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`
+}
+
 function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
   const [size, setSize] = useState({ width: 760, height: 520 })
   useLayoutEffect(() => {
@@ -61,6 +71,10 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
   const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 })
   const [activeSnap, setActiveSnap] = useState<'horizontal' | 'vertical' | null>(null)
   const [snapGuidePosition, setSnapGuidePosition] = useState(0)
+  const [gridOpen, setGridOpen] = useState(false)
+  const [gridEnabled, setGridEnabled] = useState(true)
+  const [gridColor, setGridColor] = useState(theme === 'light' ? '#dfe7e4' : '#223039')
+  const [gridOpacity, setGridOpacity] = useState(100)
   const hasCentered = useRef(false)
   const dragMotion = useRef<{
     originX: number
@@ -291,6 +305,8 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
     return <Rect {...appearance} width={object.width} height={object.height} cornerRadius={24} />
   }
 
+  const gridStroke = gridEnabled ? hexToRgba(gridColor, gridOpacity / 100) : 'transparent'
+
   const endX = object.x
   const endY = object.y
   const centerAt = (x: number, y: number) => ({
@@ -313,10 +329,10 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
           <Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
             <Rect width={WORLD_WIDTH} height={WORLD_HEIGHT} fill={canvasColors.background} stroke={canvasColors.border} strokeWidth={1 / viewport.scale} />
             {Array.from({ length: Math.floor(WORLD_WIDTH / 40) + 1 }).map((_, index) => (
-              <Line key={`v-${index}`} points={[index * 40, 0, index * 40, WORLD_HEIGHT]} stroke={canvasColors.grid} strokeWidth={1 / viewport.scale} />
+              <Line key={`v-${index}`} points={[index * 40, 0, index * 40, WORLD_HEIGHT]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
             ))}
             {Array.from({ length: Math.floor(WORLD_HEIGHT / 40) + 1 }).map((_, index) => (
-              <Line key={`h-${index}`} points={[0, index * 40, WORLD_WIDTH, index * 40]} stroke={canvasColors.grid} strokeWidth={1 / viewport.scale} />
+              <Line key={`h-${index}`} points={[0, index * 40, WORLD_WIDTH, index * 40]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
             ))}
             {activeSnap === 'horizontal' && <Line points={[0, snapGuidePosition, WORLD_WIDTH, snapGuidePosition]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
             {activeSnap === 'vertical' && <Line points={[snapGuidePosition, 0, snapGuidePosition, WORLD_HEIGHT]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
@@ -411,6 +427,28 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
         <div className="countdown-overlay"><span>GET READY</span><strong key={countdown}>{countdown}</strong><small>Grab the object when recording starts</small></div>
       )}
       {recording && <div className="recording-indicator"><i /> RECORDING MOVEMENT</div>}
+      <div className="stage-grid-controls">
+        <button type="button" className="grid-toggle-button" onClick={() => setGridOpen(!gridOpen)} aria-expanded={gridOpen} aria-label="Toggle grid controls">
+          <span>Grid</span>
+          <span className={`grid-status ${gridEnabled ? 'on' : 'off'}`}>{gridEnabled ? 'On' : 'Off'}</span>
+        </button>
+        {gridOpen && (
+          <div className="grid-panel" role="group" aria-label="Grid settings">
+            <label className="grid-panel-row">
+              <span>Visible</span>
+              <input type="checkbox" checked={gridEnabled} onChange={event => setGridEnabled(event.target.checked)} />
+            </label>
+            <label className="grid-color-row">
+              <span>Colour</span>
+              <input type="color" value={gridColor} onChange={event => setGridColor(event.target.value)} />
+            </label>
+            <label className="grid-slider-row">
+              <span>Opacity</span>
+              <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
+            </label>
+          </div>
+        )}
+      </div>
       <div className="viewport-controls" aria-label="Canvas zoom controls">
         <button onClick={() => zoomFromCenter(.8)} title="Zoom out"><Minus size={13} /></button>
         <span>{Math.round(viewport.scale * 100)}%</span>

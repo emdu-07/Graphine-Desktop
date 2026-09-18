@@ -464,6 +464,18 @@ h1 { font: 600 26px/1.1 Manrope, sans-serif; letter-spacing: -.04em; margin-bott
 .stage-stats { gap: 15px; color: #75838a; font: 500 10px/1.2 monospace; }
 .stage-container { position: relative; width: 100%; height: clamp(340px, 51vh, 545px); background: #111b20; overflow: hidden; }
 .stage-container canvas { display: block; }
+.stage-grid-controls { position: absolute; top: 12px; right: 12px; z-index: 8; display: grid; gap: 8px; }
+.grid-toggle-button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 128px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(11, 17, 21, 0.8); color: #dfe8e6; cursor: pointer; }
+.grid-status { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; padding: 2px 6px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.grid-status.on { background: rgba(184, 255, 217, 0.14); color: var(--mint); }
+.grid-status.off { background: rgba(148, 160, 167, 0.14); color: #9aa9af; }
+.grid-panel { width: min(220px, calc(100vw - 36px)); padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: rgba(11, 17, 21, 0.96); box-shadow: 0 16px 32px #0004; display: grid; gap: 10px; }
+.grid-panel-row, .grid-color-row, .grid-slider-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; font-size: 10px; color: #dfe8e6; }
+.grid-panel-row input[type='checkbox'] { accent-color: var(--mint); width: 14px; height: 14px; }
+.grid-color-row { grid-template-columns: 1fr 40px; }
+.grid-color-row input[type='color'] { width: 38px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: transparent; }
+.grid-slider-row { grid-template-columns: 1fr 1fr; }
+.grid-slider-row input[type='range'] { width: 100%; accent-color: var(--mint); }
 .stage-hint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); color: #718087; background: #0b1115cc; border: 1px solid #27343b; border-radius: 16px; padding: 6px 11px; font-size: 9px; pointer-events: none; white-space: nowrap; }
 .viewport-controls { position: absolute; right: 12px; bottom: 11px; z-index: 3; height: 29px; display: flex; align-items: center; padding: 3px; color: #8b999f; background: #0b1115e8; border: 1px solid #2d3a41; border-radius: 8px; box-shadow: 0 5px 16px #0004; }
 .viewport-controls button { width: 24px; height: 22px; padding: 0; border: 0; border-radius: 5px; color: #91a0a6; background: transparent; display: grid; place-items: center; cursor: pointer; }.viewport-controls button:hover { color: var(--mint); background: #1c292f; }.viewport-controls button:last-child { margin-left: 3px; border-left: 1px solid #2e3b42; border-radius: 0 5px 5px 0; }.viewport-controls span { min-width: 38px; text-align: center; font: 600 8px/1 monospace; }
