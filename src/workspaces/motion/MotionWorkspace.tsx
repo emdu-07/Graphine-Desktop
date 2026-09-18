@@ -25,7 +25,7 @@ export function MotionWorkspace() {
   const [showShapes, setShowShapes] = useState(false)
   const [gridOpen, setGridOpen] = useState(false)
   const [gridEnabled, setGridEnabled] = useState(true)
-  const [gridColor, setGridColor] = useState('#aab8b4')
+  const [gridColor, setGridColor] = useState('#7e8d8a')
   const [gridOpacity, setGridOpacity] = useState(100)
   const fileInput = useRef<HTMLInputElement>(null)
   const objectRef = useRef(object)
