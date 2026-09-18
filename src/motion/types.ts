@@ -27,6 +27,19 @@ export interface MotionCurve {
   amount: number
 }
 
+export interface SpatialPoint {
+  x: number
+  y: number
+}
+
+export type SpatialReconstruction = 'linear' | 'move-along-path' | 'stationary'
+
+export interface SpatialPath {
+  points: SpatialPoint[]
+  totalLength: number
+  reconstruction: SpatialReconstruction
+}
+
 export interface MotionGuideStep {
   id: string
   index: number
@@ -41,4 +54,6 @@ export interface MotionResult {
   keyframes: Record<MotionChannel, MotionKeyframe[]>
   curves: MotionCurve[]
   steps: MotionGuideStep[]
+  samples?: MotionSample[]
+  spatialPath?: SpatialPath
 }

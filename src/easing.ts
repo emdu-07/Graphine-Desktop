@@ -29,6 +29,39 @@ export function emphasizeEasing(
   return [x1, expand(x1, y1), x2, expand(x2, y2)]
 }
 
+export function fitBezierToProgress(points: Array<{ time: number, progress: number }>): [number, number, number, number] {
+  if (points.length < 2) return [.33, .33, .67, .67]
+
+  const linearTolerance = LINEAR_PROGRESS_TOLERANCE
+  if (points.every(point => Math.abs(point.progress - point.time) <= linearTolerance)) {
+    return [.33, .33, .67, .67]
+  }
+
+  let a11 = 0
+  let a12 = 0
+  let a22 = 0
+  let b1 = 0
+  let b2 = 0
+  for (const point of points) {
+    const t = point.time
+    const inverse = 1 - t
+    const basis1 = 3 * inverse * inverse * t
+    const basis2 = 3 * inverse * t * t
+    const target = point.progress - t * t * t
+    a11 += basis1 * basis1
+    a12 += basis1 * basis2
+    a22 += basis2 * basis2
+    b1 += basis1 * target
+    b2 += basis2 * target
+  }
+
+  const determinant = a11 * a22 - a12 * a12
+  const fittedY1 = Math.abs(determinant) > 1e-8 ? (b1 * a22 - b2 * a12) / determinant : .33
+  const fittedY2 = Math.abs(determinant) > 1e-8 ? (a11 * b2 - a12 * b1) / determinant : .67
+  const clamp = (value: number) => Math.max(-.5, Math.min(1.5, value))
+  return [.33, clamp(fittedY1), .67, clamp(fittedY2)]
+}
+
 export function deriveEasing(samples: MotionSample[], channel: MotionChannel): DerivedEasing {
   if (samples.length < 2) {
     return { points: [{ time: 0, progress: 0 }, { time: 1, progress: 1 }], cubic: [.33, .33, .67, .67], amount: 0 }
@@ -61,33 +94,6 @@ export function deriveEasing(samples: MotionSample[], channel: MotionChannel): D
     return { points, cubic: [.33, .33, .67, .67], amount: total }
   }
 
-  // Fit the captured progress to a cubic Bézier with fixed, evenly-spaced X handles.
-  // This gives users four values they can reproduce in Alight Motion's curve editor.
-  let a11 = 0
-  let a12 = 0
-  let a22 = 0
-  let b1 = 0
-  let b2 = 0
-  for (const point of points) {
-    const t = point.time
-    const inverse = 1 - t
-    const basis1 = 3 * inverse * inverse * t
-    const basis2 = 3 * inverse * t * t
-    const target = point.progress - t * t * t
-    a11 += basis1 * basis1
-    a12 += basis1 * basis2
-    a22 += basis2 * basis2
-    b1 += basis1 * target
-    b2 += basis2 * target
-  }
-  const determinant = a11 * a22 - a12 * a12
-  const fittedY1 = Math.abs(determinant) > 1e-8 ? (b1 * a22 - b2 * a12) / determinant : .33
-  const fittedY2 = Math.abs(determinant) > 1e-8 ? (a11 * b2 - a12 * b1) / determinant : .67
-  const clamp = (value: number) => Math.max(-.5, Math.min(1.5, value))
-
-  return {
-    points,
-    cubic: [.33, clamp(fittedY1), .67, clamp(fittedY2)],
-    amount: total,
-  }
+  const cubic = fitBezierToProgress(points)
+  return { points, cubic, amount: total }
 }

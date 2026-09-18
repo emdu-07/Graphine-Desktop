@@ -1,5 +1,6 @@
 import { detectPositionCorners } from './corners.ts'
 import { deriveEasing } from '../easing.ts'
+import { extractSpatialPath } from './path.ts'
 import type {
   MotionChannel,
   MotionCurve,
@@ -148,11 +149,21 @@ export function buildMotionResult(samples: MotionSample[]): MotionResult {
     rotation: keyframeIndices.rotation.map(index => samples[index]),
   }
 
-  return {
+  const result: MotionResult = {
     duration,
     sampleCount: samples.length,
     keyframes,
     curves: buildCurves(samples, keyframeIndices),
     steps: buildSteps(keyframes),
   }
+
+  if (samples.length > 0) {
+    return {
+      ...result,
+      samples,
+      spatialPath: extractSpatialPath(samples),
+    }
+  }
+
+  return result
 }
