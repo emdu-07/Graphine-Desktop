@@ -24,8 +24,10 @@ export function MotionWorkspace() {
   const [trailSamples, setTrailSamples] = useState<MotionSample[]>([])
   const [showShapes, setShowShapes] = useState(false)
   const [gridOpen, setGridOpen] = useState(false)
+  const [canvasSize, setCanvasSize] = useState({ width: 1024, height: 1024 })
+  const canvasButton = useRef<HTMLButtonElement>(null)
   const [gridEnabled, setGridEnabled] = useState(true)
-  const [gridColor, setGridColor] = useState('#7e8d8a')
+  const [gridColor] = useState('#7e8d8a')
   const [gridOpacity, setGridOpacity] = useState(60)
   const fileInput = useRef<HTMLInputElement>(null)
   const objectRef = useRef(object)
@@ -139,28 +141,54 @@ export function MotionWorkspace() {
           <div className="canvas-bar">
             <div className="object-identity"><Box size={15} /><span>{object.name}</span>{object.kind !== 'image' && <ShapeColorPicker value={object.fill} onChange={fill => updateObject({ ...objectRef.current, fill })} disabled={phase === 'recording' || phase === 'countdown'} />}</div>
             <div className="stage-stats-wrap">
-              <div className="stage-grid-controls stage-grid-controls-inline">
-                <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`} onClick={() => setGridEnabled(!gridEnabled)} aria-pressed={gridEnabled} aria-label={gridEnabled ? 'Disable grid' : 'Enable grid'}>
-                  <span className="grid-toggle-label">Grid</span>
-                  <span className="grid-toggle-track" aria-hidden="true">
-                    <span className="grid-toggle-thumb" />
-                  </span>
+              <div className="stage-grid-controls stage-grid-controls-inline"
+                onMouseEnter={() => setGridOpen(true)}
+                onMouseLeave={event => { if (!event.currentTarget.contains(document.activeElement)) setGridOpen(false) }}
+                onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setGridOpen(false) }}
+                onKeyDown={event => {
+                  if (event.key === 'Escape') { setGridOpen(false); canvasButton.current?.focus() }
+                }}>
+                <button ref={canvasButton} type="button" className="edit-canvas-button"
+                  aria-expanded={gridOpen} aria-controls="canvas-settings"
+                  onClick={() => setGridOpen(!gridOpen)}
+                  onKeyDown={event => { if (event.key === 'ArrowDown') { event.preventDefault(); setGridOpen(true) } }}>
+                  Edit Canvas
                 </button>
                 {gridOpen && (
-                  <div className="grid-panel" role="group" aria-label="Grid settings">
+                  <div id="canvas-settings" className="grid-panel" role="group" aria-label="Canvas settings">
+                    <button type="button" className={`grid-toggle-button ${gridEnabled ? 'on' : 'off'}`}
+                      role="switch" aria-checked={gridEnabled} onClick={() => setGridEnabled(!gridEnabled)}>
+                      <span className="grid-toggle-label">Grid</span>
+                      <span className="grid-toggle-track" aria-hidden="true"><span className="grid-toggle-thumb" /></span>
+                    </button>
                     <label className="grid-slider-row">
                       <span>Opacity</span>
                       <div className="grid-opacity-control">
-                        <input type="range" min="10" max="100" value={gridOpacity} onChange={event => setGridOpacity(Number(event.target.value))} />
+                        <input type="range" min="10" max="100" value={gridOpacity} disabled={!gridEnabled} onChange={event => setGridOpacity(Number(event.target.value))} />
                       </div>
                     </label>
+                    <form className="canvas-resize-form" onSubmit={event => {
+                      event.preventDefault()
+                      if (phase === 'recording' || phase === 'countdown') return
+                      const fields = new FormData(event.currentTarget)
+                      const width = Number(fields.get('width'))
+                      const height = Number(fields.get('height'))
+                      if ([width, height].every(value => Number.isInteger(value) && value >= 256 && value <= 4096)) setCanvasSize({ width, height })
+                    }}>
+                      <fieldset disabled={phase === 'recording' || phase === 'countdown'}>
+                        <legend>Resize canvas</legend>
+                        <label>Width (px)<input name="width" type="number" min="256" max="4096" step="1" required defaultValue={canvasSize.width} /></label>
+                        <label>Height (px)<input name="height" type="number" min="256" max="4096" step="1" required defaultValue={canvasSize.height} /></label>
+                        <button type="submit" className="tool-button">Apply size</button>
+                      </fieldset>
+                    </form>
                   </div>
                 )}
               </div>
               <div className="stage-stats"><span>x: {Math.round(object.x)}</span><span>y: {Math.round(object.y)}</span><span>{Math.round(object.rotation)}°</span></div>
             </div>
           </div>
-          <MotionStage object={object} onChange={updateObject} countdown={countdown} recording={phase === 'recording'} motionPath={trailSamples} gridEnabled={gridEnabled} gridColor={gridColor} gridOpacity={gridOpacity} />
+          <MotionStage canvasWidth={canvasSize.width} canvasHeight={canvasSize.height} object={object} onChange={updateObject} countdown={countdown} recording={phase === 'recording'} motionPath={trailSamples} gridEnabled={gridEnabled} gridColor={gridColor} gridOpacity={gridOpacity} />
           <div className="playback-bar capture-bar">
             <button className={`play-button ${phase === 'recording' ? 'stop' : ''}`} onClick={phase === 'recording' ? stopCapture : startCapture} disabled={phase === 'countdown'}>{phase === 'recording' ? <StopCircle size={17} /> : <Play size={17} fill="currentColor" />}</button>
             <span className="timecode">{elapsed.toFixed(1)}s</span>

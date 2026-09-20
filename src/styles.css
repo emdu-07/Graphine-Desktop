@@ -749,3 +749,19 @@ h1 { font: 600 26px/1.1 Manrope, sans-serif; letter-spacing: -.04em; margin-bott
 
 .easing-card { --position-curve: #26c98b; }
 :root[data-theme='light'] .easing-card { --position-curve: #087749; }
+
+/* Canvas settings */
+.edit-canvas-button { border: 0; background: transparent; color: inherit; padding: 6px 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.edit-canvas-button:hover, .edit-canvas-button[aria-expanded='true'] { color: var(--mint); }
+.edit-canvas-button:focus-visible { outline: 2px solid var(--mint); border-radius: 5px; }
+.grid-panel { background: var(--panel); color: inherit; }
+.grid-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -9px; height: 9px; }
+.grid-panel .grid-toggle-button { width: 100%; min-width: 0; border: 0; border-radius: 5px; background: transparent; padding: 5px 0; }
+.grid-panel .grid-toggle-label, .grid-panel .grid-slider-row { color: inherit; }
+.canvas-resize-form { border-top: 1px solid var(--line); padding-top: 10px; }
+.canvas-resize-form fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; min-width: 0; }
+.canvas-resize-form legend { font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+.canvas-resize-form label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; }
+.canvas-resize-form input { width: 85px; min-width: 0; padding: 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); color: inherit; }
+.canvas-resize-form button { justify-content: center; }
+.canvas-resize-form fieldset:disabled { opacity: .5; }

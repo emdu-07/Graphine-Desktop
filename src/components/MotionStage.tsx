@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, u
 import { LocateFixed, Minus, Plus } from 'lucide-react'
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage, Text, Transformer } from 'react-konva'
 import type Konva from 'konva'
+import { panViewport } from '../viewport'
 import { ThemeContext } from './layout/ThemeContext'
 import { buildMotionResult } from '../motion/engine'
 import type { MotionObject, MotionSample } from '../types'
@@ -13,13 +14,13 @@ interface MotionStageProps {
   countdown?: number | null
   recording?: boolean
   motionPath?: MotionSample[]
+  canvasWidth?: number
+  canvasHeight?: number
   gridEnabled?: boolean
   gridColor?: string
   gridOpacity?: number
 }
 
-const WORLD_WIDTH = 1024
-const WORLD_HEIGHT = 1024
 const MIN_ZOOM = .35
 const MAX_ZOOM = 3
 
@@ -59,7 +60,7 @@ function LoadedImage({ src }: { src?: string }) {
   return image
 }
 
-export function MotionStage({ object, onChange, previewPosition, countdown, recording, motionPath = [], gridEnabled = true, gridColor, gridOpacity = 100 }: MotionStageProps) {
+export function MotionStage({ object, onChange, previewPosition, countdown, recording, motionPath = [], canvasWidth = 1024, canvasHeight = 1024, gridEnabled = true, gridColor, gridOpacity = 100 }: MotionStageProps) {
   const theme = useContext(ThemeContext)
   const positionKeys = useMemo(() => buildMotionResult(motionPath).keyframes.position, [motionPath])
   const canvasColors = theme === 'light'
@@ -74,7 +75,7 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
   const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 })
   const [activeSnap, setActiveSnap] = useState<'horizontal' | 'vertical' | null>(null)
   const [snapGuidePosition, setSnapGuidePosition] = useState(0)
-  const hasCentered = useRef(false)
+  const hasCentered = useRef('')
   const dragMotion = useRef<{
     originX: number
     originY: number
@@ -89,10 +90,10 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
   const clampPosition = useCallback((position: { x: number; y: number }) => {
     const padding = 0
     return {
-      x: Math.min(Math.max(position.x, padding), WORLD_WIDTH - object.width - padding),
-      y: Math.min(Math.max(position.y, padding), WORLD_HEIGHT - object.height - padding),
+      x: Math.min(Math.max(position.x, padding), Math.max(0, canvasWidth - object.width - padding)),
+      y: Math.min(Math.max(position.y, padding), Math.max(0, canvasHeight - object.height - padding)),
     }
-  }, [object.width, object.height])
+  }, [object.width, object.height, canvasWidth, canvasHeight])
 
   const boundShapeDrag = useCallback((absolutePosition: { x: number; y: number }) => {
     const parent = shapeRef.current?.getParent()
@@ -119,41 +120,29 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
     let y = node.y()
 
     if (bounds.x < padding) x += padding - bounds.x
-    else if (bounds.x + bounds.width > WORLD_WIDTH - padding) x -= bounds.x + bounds.width - (WORLD_WIDTH - padding)
+    else if (bounds.x + bounds.width > canvasWidth - padding) x -= bounds.x + bounds.width - (canvasWidth - padding)
     if (bounds.y < padding) y += padding - bounds.y
-    else if (bounds.y + bounds.height > WORLD_HEIGHT - padding) y -= bounds.y + bounds.height - (WORLD_HEIGHT - padding)
+    else if (bounds.y + bounds.height > canvasHeight - padding) y -= bounds.y + bounds.height - (canvasHeight - padding)
 
     node.position({ x, y })
     return { x, y }
   }
 
-  const clampViewport = useCallback((next: { x: number; y: number; scale: number }) => {
-    const scaledWidth = WORLD_WIDTH * next.scale
-    const scaledHeight = WORLD_HEIGHT * next.scale
-    const x = scaledWidth <= size.width
-      ? (size.width - scaledWidth) / 2
-      : Math.min(0, Math.max(size.width - scaledWidth, next.x))
-    const y = scaledHeight <= size.height
-      ? (size.height - scaledHeight) / 2
-      : Math.min(0, Math.max(size.height - scaledHeight, next.y))
-    return { ...next, x, y }
-  }, [size.width, size.height])
-
   const centerOnObject = useCallback(() => {
     const scale = 1
-    setViewport(clampViewport({
+    setViewport({
       scale,
       x: size.width / 2 - (object.x + object.width / 2) * scale,
       y: size.height / 2 - (object.y + object.height / 2) * scale,
-    }))
-  }, [clampViewport, object.x, object.y, object.width, object.height, size.width, size.height])
+    })
+  }, [ object.x, object.y, object.width, object.height, size.width, size.height])
 
   useEffect(() => {
-    if (!hasCentered.current && size.width > 0 && size.height > 0) {
+    if (hasCentered.current !== `${canvasWidth}:${canvasHeight}` && size.width > 0 && size.height > 0) {
       centerOnObject()
-      hasCentered.current = true
+      hasCentered.current = `${canvasWidth}:${canvasHeight}`
     }
-  }, [centerOnObject, size.width, size.height])
+  }, [centerOnObject, size.width, size.height, canvasWidth, canvasHeight])
 
   const zoomAt = (point: { x: number; y: number }, requestedScale: number) => {
     const scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, requestedScale))
@@ -161,11 +150,11 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
       x: (point.x - viewport.x) / viewport.scale,
       y: (point.y - viewport.y) / viewport.scale,
     }
-    setViewport(clampViewport({
+    setViewport({
       scale,
       x: point.x - worldPoint.x * scale,
       y: point.y - worldPoint.y * scale,
-    }))
+    })
   }
 
   const handleWheel = (event: Konva.KonvaEventObject<WheelEvent>) => {
@@ -176,11 +165,7 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
       zoomAt(pointer, viewport.scale * Math.exp(-event.evt.deltaY * .01))
       return
     }
-    setViewport(current => clampViewport({
-      ...current,
-      x: current.x - event.evt.deltaX,
-      y: current.y - event.evt.deltaY,
-    }))
+    setViewport(current => panViewport(current, event.evt.deltaX, event.evt.deltaY))
   }
 
   const zoomFromCenter = (factor: number) => {
@@ -243,9 +228,9 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
     const targetY = snap === 'horizontal' ? state.originY + deltaY * magneticStrength : rawY
     const smoothing = .24
     const minX = object.width / 2
-    const maxX = WORLD_WIDTH - object.width / 2
+    const maxX = canvasWidth - object.width / 2
     const minY = object.height / 2
-    const maxY = WORLD_HEIGHT - object.height / 2
+    const maxY = canvasHeight - object.height / 2
     // Boundary contact overrides smoothing and snapping, so the shape hits the wall exactly.
     const filteredX = rawX <= minX ? minX : rawX >= maxX ? maxX : state.filteredX + (targetX - state.filteredX) * smoothing
     const filteredY = rawY <= minY ? minY : rawY >= maxY ? maxY : state.filteredY + (targetY - state.filteredY) * smoothing
@@ -327,15 +312,15 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
       <Stage width={size.width} height={size.height} onWheel={handleWheel}>
         <Layer listening={false}>
           <Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
-            <Rect width={WORLD_WIDTH} height={WORLD_HEIGHT} fill={canvasColors.background} stroke={canvasColors.border} strokeWidth={1 / viewport.scale} />
-            {Array.from({ length: Math.floor(WORLD_WIDTH / 40) + 1 }).map((_, index) => (
-              <Line key={`v-${index}`} points={[index * 40, 0, index * 40, WORLD_HEIGHT]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
+            <Rect width={canvasWidth} height={canvasHeight} fill={canvasColors.background} stroke={canvasColors.border} strokeWidth={1 / viewport.scale} />
+            {Array.from({ length: Math.floor(canvasWidth / 40) + 1 }).map((_, index) => (
+              <Line key={`v-${index}`} points={[index * 40, 0, index * 40, canvasHeight]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
             ))}
-            {Array.from({ length: Math.floor(WORLD_HEIGHT / 40) + 1 }).map((_, index) => (
-              <Line key={`h-${index}`} points={[0, index * 40, WORLD_WIDTH, index * 40]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
+            {Array.from({ length: Math.floor(canvasHeight / 40) + 1 }).map((_, index) => (
+              <Line key={`h-${index}`} points={[0, index * 40, canvasWidth, index * 40]} stroke={gridStroke} strokeWidth={1 / viewport.scale} />
             ))}
-            {activeSnap === 'horizontal' && <Line points={[0, snapGuidePosition, WORLD_WIDTH, snapGuidePosition]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
-            {activeSnap === 'vertical' && <Line points={[snapGuidePosition, 0, snapGuidePosition, WORLD_HEIGHT]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
+            {activeSnap === 'horizontal' && <Line points={[0, snapGuidePosition, canvasWidth, snapGuidePosition]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
+            {activeSnap === 'vertical' && <Line points={[snapGuidePosition, 0, snapGuidePosition, canvasHeight]} stroke={canvasColors.selection} opacity={.55} strokeWidth={1 / viewport.scale} dash={[5 / viewport.scale, 6 / viewport.scale]} />}
             {(recording || motionPath.length > 0) && (
               <Group>
                 <Group
@@ -389,8 +374,8 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
                 boundBoxFunc={(oldBox, newBox) => (
                   newBox.width < 48
                   || newBox.height < 48
-                  || newBox.width > WORLD_WIDTH - 24
-                  || newBox.height > WORLD_HEIGHT - 24
+                  || newBox.width > canvasWidth - 24
+                  || newBox.height > canvasHeight - 24
                     ? oldBox
                     : newBox
                 )}

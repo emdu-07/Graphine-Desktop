@@ -167,3 +167,19 @@ it('hits all four world edges exactly on the first drag event and can move away 
     assert.ok(saved.y > 0 && saved.y < 898)
   }
 })
+
+
+it('resizes the canvas background and grid together', async () => {
+  await render({ canvasWidth: 1920, canvasHeight: 1080 })
+  assert.ok(scene.some(node => node.kind === 'Rect' && node.props.width === 1920 && node.props.height === 1080))
+  const lines = scene.filter(node => node.kind === 'Line').map(node => node.props.points)
+  assert.ok(lines.some(points => JSON.stringify(points) === '[1920,0,1920,1080]'))
+  assert.ok(lines.some(points => JSON.stringify(points) === '[0,1080,1920,1080]'))
+})
+
+it('hides the resized grid when its toggle is off', async () => {
+  await render({ canvasWidth: 1920, canvasHeight: 1080, gridEnabled: false })
+  const grid = scene.filter(node => node.kind === 'Line' && Array.isArray(node.props.points) && node.props.points.length === 4)
+  assert.ok(grid.length > 0)
+  assert.ok(grid.every(node => node.props.stroke === 'transparent'))
+})
