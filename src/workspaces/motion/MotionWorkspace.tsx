@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Box, ChevronDown, Circle as CircleIcon, ImagePlus, Play, Plus, Square, StopCircle, Triangle } from 'lucide-react'
 import { MotionStage } from '../../components/MotionStage'
+import { importImage } from '../../imageImport'
 import { PALETTE } from '../../data'
 import { buildMotionResult } from '../../motion/engine'
 import type { CapturePhase, MotionSample } from '../../motion/types'
@@ -29,6 +30,8 @@ export function MotionWorkspace() {
   const [gridEnabled, setGridEnabled] = useState(true)
   const [gridColor] = useState('#7e8d8a')
   const [gridOpacity, setGridOpacity] = useState(60)
+  const [importError, setImportError] = useState('')
+  const [importing, setImporting] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
   const objectRef = useRef(object)
   const sampleBuffer = useRef<MotionSample[]>([])
@@ -105,16 +108,25 @@ export function MotionWorkspace() {
     setProgress(0)
   }
 
-  const handleUpload = (file?: File) => {
+  const handleUpload = async (file?: File) => {
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      updateObject({ ...INITIAL_OBJECT, id: crypto.randomUUID(), kind: 'image', name: file.name, imageUrl: String(reader.result), width: 180, height: 135 })
+    setImportError('')
+    setImporting(true)
+    try {
+      const image = await importImage(file)
+      const x = (canvasSize.width - image.width) / 2
+      const y = (canvasSize.height - image.height) / 2
+      updateObject({ ...INITIAL_OBJECT, id: crypto.randomUUID(), kind: 'image', name: file.name, ...image, x, y, startX: x, startY: y })
       setSamples([])
       setTrailSamples([])
+      setCountdown(null)
+      setProgress(0)
       setPhase('idle')
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'Photo import failed. Please try again.')
+    } finally {
+      setImporting(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const motionResult = buildMotionResult(samples)
@@ -132,10 +144,16 @@ export function MotionWorkspace() {
               <button className="tool-button" onClick={() => setShowShapes(!showShapes)} disabled={phase === 'recording'}><Plus size={17} /> Shape <ChevronDown size={13} /></button>
               {showShapes && <div className="shape-popover"><button onClick={() => addShape('square')}><Square size={18} /> Square</button><button onClick={() => addShape('circle')}><CircleIcon size={18} /> Circle</button><button onClick={() => addShape('triangle')}><Triangle size={18} /> Triangle</button></div>}
             </div>
-            <button className="tool-button" onClick={() => fileInput.current?.click()} disabled={phase === 'recording'}><ImagePlus size={17} /> Import</button>
-            <input ref={fileInput} type="file" accept="image/*" hidden onChange={(event) => handleUpload(event.target.files?.[0])} />
+            <button className="tool-button" onClick={() => fileInput.current?.click()} disabled={importing || phase === 'recording' || phase === 'countdown'}><ImagePlus size={17} /> {importing ? 'Importing…' : 'Import'}</button>
+            <input ref={fileInput} type="file" accept="image/*" hidden onChange={event => {
+              const file = event.currentTarget.files?.[0]
+              event.currentTarget.value = ''
+              void handleUpload(file)
+            }} />
           </div>
         </div>
+
+        {importError && <p role="alert">{importError}</p>}
 
         <div className={`canvas-card ${phase === 'recording' ? 'is-recording' : ''}`}>
           <div className="canvas-bar">

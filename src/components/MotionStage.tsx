@@ -138,11 +138,11 @@ export function MotionStage({ object, onChange, previewPosition, countdown, reco
   }, [ object.x, object.y, object.width, object.height, size.width, size.height])
 
   useEffect(() => {
-    if (hasCentered.current !== `${canvasWidth}:${canvasHeight}` && size.width > 0 && size.height > 0) {
+    if (hasCentered.current !== `${object.id}:${canvasWidth}:${canvasHeight}` && size.width > 0 && size.height > 0) {
       centerOnObject()
-      hasCentered.current = `${canvasWidth}:${canvasHeight}`
+      hasCentered.current = `${object.id}:${canvasWidth}:${canvasHeight}`
     }
-  }, [centerOnObject, size.width, size.height, canvasWidth, canvasHeight])
+  }, [centerOnObject, size.width, size.height, canvasWidth, canvasHeight, object.id])
 
   const zoomAt = (point: { x: number; y: number }, requestedScale: number) => {
     const scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, requestedScale))
