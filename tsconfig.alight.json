@@ -10,5 +10,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/alight/**/*.ts", "scripts/alight-inspect.ts", "tests/alight*.test.ts"]
+  "include": ["src/alight/**/*.ts", "scripts/alight-inspect.ts", "scripts/fixtures-list.ts", "scripts/fixtures/**/*.ts", "tests/alight*.test.ts"]
 }

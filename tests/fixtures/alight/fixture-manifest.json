@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "id": "timing-affine",
+      "title": "Synthetic trimmed affine clocks",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/timing-affine.xml",
+      "primaryConstruct": "affine_timing",
+      "expectedConstructs": [
+        "affine_timing",
+        "nested_scenes",
+        "trim",
+        "speed",
+        "animated_rotation"
+      ],
+      "provenance": "synthetic",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Existing synthetic arithmetic fixture. Tests exercise explicit timing policies; this XML is not evidence of Alight rendering semantics."
+    },
+    {
+      "id": "odette-sing-me-to-sleep",
+      "title": "Odette x Sing me to sleep",
+      "category": "real-world",
+      "xmlPath": "real-world/Odette x Sing me to sleep.xml",
+      "primaryConstruct": "multi_layer_composition",
+      "expectedConstructs": [
+        "multi_layer_composition",
+        "nested_scenes",
+        "parenting",
+        "mask",
+        "flip_layer",
+        "animated_properties",
+        "media",
+        "bookmarks"
+      ],
+      "provenance": "real_world_project",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Existing provided real-world export, preserved byte-for-byte. No matching render or local source media is supplied. Parser/timing assertions are not reviewed renderer truth; content:// media URIs are not corpus paths."
+    },
+    {
+      "id": "isolation-01-minimal-control",
+      "title": "Minimal control",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/01-minimal-control.xml",
+      "primaryConstruct": "scene_metadata",
+      "expectedConstructs": [
+        "scene_metadata",
+        "solid_fill"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-02-two-solid-layers",
+      "title": "Two solid layers",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/02-two-solid-layers.xml",
+      "primaryConstruct": "multi_layer_composition",
+      "expectedConstructs": [
+        "multi_layer_composition",
+        "solid_fill"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-03-size-property",
+      "title": "Size property",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/03-size-property.xml",
+      "primaryConstruct": "size_property",
+      "expectedConstructs": [
+        "size_property",
+        "vec2"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-04-static-gradient",
+      "title": "Static gradient",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/04-static-gradient.xml",
+      "primaryConstruct": "static_gradient",
+      "expectedConstructs": [
+        "static_gradient",
+        "size_property"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-05-animated-location",
+      "title": "Animated location",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/05-animated-location.xml",
+      "primaryConstruct": "animated_location",
+      "expectedConstructs": [
+        "animated_location",
+        "keyframes"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-06-circle-shape",
+      "title": "Circle shape",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/06-circle-shape.xml",
+      "primaryConstruct": "circle_shape",
+      "expectedConstructs": [
+        "circle_shape",
+        "solid_fill"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-07-animated-scale",
+      "title": "Animated scale",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/07-animated-scale.xml",
+      "primaryConstruct": "animated_scale",
+      "expectedConstructs": [
+        "animated_scale",
+        "keyframes"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-08-animated-opacity",
+      "title": "Animated opacity",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/08-animated-opacity.xml",
+      "primaryConstruct": "animated_opacity",
+      "expectedConstructs": [
+        "animated_opacity",
+        "keyframes"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-09-screen-blend",
+      "title": "Screen blend child element",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/09-screen-blend.xml",
+      "primaryConstruct": "screen_blend_child",
+      "expectedConstructs": [
+        "screen_blend_child",
+        "solid_fill"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-10-full-multi-layer",
+      "title": "Combined multi-layer composition",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/10-full-multi-layer.xml",
+      "primaryConstruct": "multi_layer_composition",
+      "expectedConstructs": [
+        "multi_layer_composition",
+        "static_gradient",
+        "animated_location",
+        "circle_shape",
+        "animated_scale",
+        "animated_opacity",
+        "screen_blend_child",
+        "size_property"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-import-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-11-two-layer-screen-blend",
+      "title": "Two-layer screen blend child",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/11-two-layer-screen-blend.xml",
+      "primaryConstruct": "screen_blend_child",
+      "expectedConstructs": [
+        "screen_blend_child",
+        "multi_layer_composition"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-followup-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-12-full-with-internal-comments",
+      "title": "Combined composition with internal comments",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/12-full-with-internal-comments.xml",
+      "primaryConstruct": "xml_comments",
+      "expectedConstructs": [
+        "xml_comments",
+        "multi_layer_composition",
+        "screen_blend_child"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-followup-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-13-full-comments-between-layers-only",
+      "title": "Comments between layers only",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/13-full-comments-between-layers-only.xml",
+      "primaryConstruct": "xml_comments",
+      "expectedConstructs": [
+        "xml_comments",
+        "multi_layer_composition",
+        "screen_blend_child"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-followup-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-14-two-layer-blending-attribute",
+      "title": "Two-layer blending attribute",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/14-two-layer-blending-attribute.xml",
+      "primaryConstruct": "screen_blend_attribute",
+      "expectedConstructs": [
+        "screen_blend_attribute",
+        "multi_layer_composition"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-blend-fix-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-15-full-multilayer-no-blend",
+      "title": "Combined composition without blend mode",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/15-full-multilayer-no-blend.xml",
+      "primaryConstruct": "multi_layer_composition",
+      "expectedConstructs": [
+        "multi_layer_composition",
+        "static_gradient",
+        "animated_location",
+        "circle_shape",
+        "animated_scale",
+        "animated_opacity"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-blend-fix-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    },
+    {
+      "id": "isolation-16-full-multilayer-blending-attribute",
+      "title": "Combined composition with blending attribute",
+      "category": "schema-isolation",
+      "xmlPath": "schema-isolation/16-full-multilayer-blending-attribute.xml",
+      "primaryConstruct": "screen_blend_attribute",
+      "expectedConstructs": [
+        "screen_blend_attribute",
+        "multi_layer_composition",
+        "static_gradient",
+        "animated_location",
+        "circle_shape",
+        "animated_scale",
+        "animated_opacity"
+      ],
+      "provenance": "schema_fixture",
+      "rendererVerified": false,
+      "humanReviewed": false,
+      "notes": "Copied unchanged from alight-motion-blend-fix-tests. XML-only import/schema isolation candidate; import-test claims are not renderer verification. Expected constructs label XML content, not proven rendering semantics."
+    }
+  ]
+}

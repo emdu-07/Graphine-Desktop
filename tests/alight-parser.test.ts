@@ -8,7 +8,7 @@ import { parseAlightXml } from '../src/alight/parser.ts'
 import { inspectProject } from '../src/alight/inspect.ts'
 import type { AnimationLayer, AnimationProperty, AnimationScene, XmlElement } from '../src/alight/types.ts'
 
-const fixture = new URL('./fixtures/alight/Odette x Sing me to sleep.xml', import.meta.url)
+const fixture = new URL('./fixtures/alight/real-world/Odette x Sing me to sleep.xml', import.meta.url)
 const xml = readFileSync(fixture, 'utf8')
 const result = parseAlightXml(xml)
 assert.ok(result.project)

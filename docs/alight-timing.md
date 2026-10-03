@@ -166,9 +166,9 @@ all 239 keyframe conversions unresolved.
 ## Inspection and adding fixtures
 
 ```sh
-npm run alight:inspect -- "tests/fixtures/alight/Odette x Sing me to sleep.xml"
-npm run alight:inspect -- "tests/fixtures/alight/Odette x Sing me to sleep.xml" --timing-policy layer-relative-v1
-npm run alight:inspect -- tests/fixtures/alight/timing-affine.xml --timing-policy layer-relative-v1
+npm run alight:inspect -- "tests/fixtures/alight/real-world/Odette x Sing me to sleep.xml"
+npm run alight:inspect -- "tests/fixtures/alight/real-world/Odette x Sing me to sleep.xml" --timing-policy layer-relative-v1
+npm run alight:inspect -- tests/fixtures/alight/schema-isolation/timing-affine.xml --timing-policy layer-relative-v1
 ```
 
 Inspection includes source-coordinate frequencies, exact/unresolved counts,
@@ -176,9 +176,11 @@ scene intervals, the policy, and precise timing diagnostics. It is an inspection
 inventory, not a training export. The CLI retains its parser-error exit behavior;
 unresolved interpretation is not a parse failure.
 
-Add future real exports unchanged under `tests/fixtures/alight/`. Append a case to
+Add future real exports unchanged under the appropriate provenance category in
+`tests/fixtures/alight/` and register them in `fixture-manifest.json` (see
+[alight-fixtures.md](alight-fixtures.md)). Append a timing case to
 `timing-cases.json` specifying the reviewed policy, group IDs, raw sequences,
-expected intervals and parent cases. The test runner discovers manifest entries;
+expected intervals and parent cases. The timing test runner discovers timing-case entries;
 production code contains no fixture IDs. Keep synthetic cases explicitly labeled.
 Record provenance and whether evidence is XML-only or renderer-measured in the
 review documentation. Unsupported cases should assert null coordinates and

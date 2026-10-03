@@ -134,8 +134,8 @@ it('renders a white canvas in light mode and preserves the dark canvas in dark m
   const { ThemeContext } = await server.ssrLoadModule('/src/components/layout/ThemeContext.ts')
   const { MotionStage } = await server.ssrLoadModule('/src/components/MotionStage.tsx')
   for (const [theme, background, grid, selection] of [
-    ['light', '#ffffff', '#e3e9e6', '#087749'],
-    ['dark', '#111b20', '#223039', '#b8ffd9'],
+    ['light', '#ffffff', 'rgba(223, 231, 228, 1)', '#087749'],
+    ['dark', '#111b20', 'rgba(34, 48, 57, 1)', '#b8ffd9'],
   ]) {
     scene.length = 0
     renderToStaticMarkup(createElement(ThemeContext.Provider, { value: theme }, createElement(MotionStage, { object, onChange() {} })))

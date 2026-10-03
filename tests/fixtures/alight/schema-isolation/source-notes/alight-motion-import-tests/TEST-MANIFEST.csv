@@ -1,0 +1,11 @@
+file,isolated_feature,purpose
+01-minimal-control.xml,Known-good baseline,Expected PASS based on user's test
+02-two-solid-layers.xml,Multiple <shape> layers,Tests whether layer count itself is accepted
+03-size-property.xml,"<property name=""size"" type=""vec2"">",Tests size property
+04-static-gradient.xml,fillType=gradient + <gradient> + size,Tests static gradient representation
+05-animated-location.xml,<location type=vec2> with <kf>,Tests keyed position
+06-circle-shape.xml,"s="".circle""",Tests circle primitive
+07-animated-scale.xml,<scale type=vec2> with <kf>,Tests keyed scale
+08-animated-opacity.xml,<opacity type=float> with <kf>,Tests keyed opacity
+09-screen-blend.xml,"<blendMode value=""screen"">",Tests blend-mode child element
+10-full-multi-layer.xml,All repository multi-layer features combined,Expected FAIL based on user's test

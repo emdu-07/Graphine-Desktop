@@ -94,7 +94,7 @@ it('negative, modest and large source coordinates are not clamped or automatical
 })
 
 it('synthetic affine fixture composes speed and trim through two nested scenes', () => {
-  const parsed = load('timing-affine.xml')
+  const parsed = load('schema-isolation/timing-affine.xml')
   assert.deepEqual(parsed.errors, [])
   const timeline = resolveTimeline(parsed.project!, LAYER_RELATIVE_TIMING)
   const track = timeline.layers.find(layer => layer.source.id === 'track')!

@@ -10,6 +10,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "preview": "vite preview",
     "alight:inspect": "node --experimental-strip-types scripts/alight-inspect.ts",
+    "fixtures:list": "node --experimental-strip-types scripts/fixtures-list.ts",
     "typecheck": "tsc -b"
   },
   "dependencies": {

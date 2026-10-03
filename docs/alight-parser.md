@@ -98,7 +98,7 @@ From the repository root, using the same Node TypeScript execution convention as
 the tests:
 
 ```sh
-npm run alight:inspect -- "tests/fixtures/alight/Odette x Sing me to sleep.xml"
+npm run alight:inspect -- "tests/fixtures/alight/real-world/Odette x Sing me to sleep.xml"
 npm run alight:inspect -- "/path/to/project.xml"
 ```
 
@@ -112,7 +112,7 @@ is produced.
 
 ## Fixture coverage
 
-`tests/fixtures/alight/Odette x Sing me to sleep.xml` is copied unchanged from the
+`tests/fixtures/alight/real-world/Odette x Sing me to sleep.xml` is copied unchanged from the
 provided local export. It contains 98 layers (21 media, 52 shape, 8 null, 17
 embedded), 17 nested scenes, 144 effect instances, 239 keyframes, 21 bookmarks,
 and 7 parent relationships. Tests assert metadata, inventory, raw easing/time
